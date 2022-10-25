@@ -2,4 +2,6 @@
 bin/
 # ignore every pdf file
 *.pdf
+*.class
+.gradle
 # rule exception (beginning with a !): pdf files named 'myImportantFile.pdf' should be track!myImportantFile.pdf
