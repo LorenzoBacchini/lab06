@@ -8,12 +8,12 @@ import it.unibo.collections.social.api.User;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Objects;
 
 /**
  * 
@@ -36,7 +36,7 @@ public final class SocialNetworkUserImpl<U extends User> extends UserImpl implem
      * In order to save the people followed by a user organized in groups, adopt
      * a generic-type Map:  think of what type of keys and values would best suit the requirements
      */
-
+    private Map<String, Set<U>> friends;
     /*
      * [CONSTRUCTORS]
      *
@@ -62,12 +62,16 @@ public final class SocialNetworkUserImpl<U extends User> extends UserImpl implem
      *            application
      */
     public SocialNetworkUserImpl(final String name, final String surname, final String user, final int userAge) {
-        super(null, null, null, 0);
+        super(name, surname, user, userAge);
+        this.friends = new HashMap<>();
     }
 
     /*
      * 2) Define a further constructor where the age defaults to -1
      */
+    public SocialNetworkUserImpl(final String name, final String surname, final String user) {
+        this(name, surname, user, -1);
+    }
 
     /*
      * [METHODS]
@@ -76,7 +80,16 @@ public final class SocialNetworkUserImpl<U extends User> extends UserImpl implem
      */
     @Override
     public boolean addFollowedUser(final String circle, final U user) {
-        return false;
+        Objects.requireNonNull(circle);
+        Objects.requireNonNull(user);
+        Set<U> s;
+        if(!friends.containsKey(circle)){
+            s = new HashSet<>();
+            friends.put(circle, s);
+        }else{
+            s = friends.get(circle);
+        }
+        return s.add(user);
     }
 
     /**
@@ -86,11 +99,21 @@ public final class SocialNetworkUserImpl<U extends User> extends UserImpl implem
      */
     @Override
     public Collection<U> getFollowedUsersInGroup(final String groupName) {
-        return null;
+        final Collection<U> followeUserInGroup;
+        followeUserInGroup = friends.get(groupName);
+        if(followeUserInGroup == null){
+            return new ArrayList<U>();
+        }
+        return new ArrayList<>(followeUserInGroup);
     }
 
     @Override
     public List<U> getFollowedUsers() {
-        return null;
+        //sarebbe meglio riempire prima un set per evitare amici duplicati in gruppi diversi
+        Set<U> allFollowedUsers = new HashSet<>();
+        for (Set<U> s  : friends.values()) {
+            allFollowedUsers.addAll(s);
+        }
+        return new ArrayList<>(allFollowedUsers);
     }
 }
