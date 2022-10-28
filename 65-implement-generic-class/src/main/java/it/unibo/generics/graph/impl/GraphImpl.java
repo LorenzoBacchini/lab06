@@ -1,7 +1,9 @@
 package it.unibo.generics.graph.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -54,12 +56,41 @@ public class GraphImpl<N> implements Graph<N> {
     @Override
     public List<N> getPath(N source, N target) {
         if(checkEdge(source, target)){
-            Map<N, Boolean> visited = new HashMap<>();
+            HashMap<N, Boolean> visited = new HashMap<>();
             for (N key : graph.keySet()) {
                 visited.put(key, false);
             }
+           
+            LinkedList<N> path = new LinkedList<>();
+            
+            if(dfs(source, target, visited, path)){
+                System.out.println("Node " + target + " is reachable from node " + source);
+                System.out.println("Path: " + path);
+                return path;
+            }
+            System.out.println("Not reachable");
         }
         return null;
+    }
+
+    private boolean dfs(N source, N target,
+    HashMap<N, Boolean> visited, LinkedList<N> path){
+        visited.replace(source, true);
+        path.add(source);
+
+        if(source == target){
+            return true;
+        }
+
+        for ( N el : graph.get(source)) {
+            if(!visited.get(el)){
+                if(dfs(el, target, visited, path)){
+                    return true;
+                }
+            }
+        }
+        path.pop();
+        return false;
     }
 
 
