@@ -30,8 +30,6 @@ public class GraphImpl<N> implements Graph<N> {
         if(checkEdge(source, target)){
             s = graph.get(source);
             s.add(target);
-            s = graph.get(target);
-            s.add(source);
         }
         
     }
@@ -44,11 +42,9 @@ public class GraphImpl<N> implements Graph<N> {
     @Override
     public Set<N> linkedNodes(N node) {
         Set<N> s;
-        if((node != null)){
-            if(graph.containsKey(node)){
-                s = new HashSet<>(graph.get(node));
-                return s;
-            }
+        if(checkNode(node)){
+            s = new HashSet<>(graph.get(node));
+            return s;
         }
         return null;
     }
