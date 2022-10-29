@@ -1,6 +1,8 @@
 package it.unibo.generics.graph.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -18,15 +20,15 @@ public class GraphImpl<N> implements Graph<N> {
     }
 
     @Override
-    public void addNode(N node) {
+    public void addNode(final N node) {
         if((node != null) && !graph.containsKey(node)){
-            graph.put(node, new HashSet<>());
+            graph.putIfAbsent(node, new HashSet<>());
         }
     }
 
     @Override
-    public void addEdge(N source, N target) {
-        Set<N> s;
+    public void addEdge(final N source, final N target) {
+        final Set<N> s;
         if(checkEdge(source, target)){
             s = graph.get(source);
             s.add(target);
@@ -40,8 +42,8 @@ public class GraphImpl<N> implements Graph<N> {
     }
 
     @Override
-    public Set<N> linkedNodes(N node) {
-        Set<N> s;
+    public Set<N> linkedNodes(final N node) {
+        final Set<N> s;
         if(checkNode(node)){
             s = new HashSet<>(graph.get(node));
             return s;
@@ -50,14 +52,14 @@ public class GraphImpl<N> implements Graph<N> {
     }
 
     @Override
-    public List<N> getPath(N source, N target) {
+    public List<N> getPath(final N source, final N target) {
         if(checkEdge(source, target)){
-            HashMap<N, Boolean> visited = new HashMap<>();
+            final HashMap<N, Boolean> visited = new HashMap<>();
             for (N key : graph.keySet()) {
                 visited.put(key, false);
             }
            
-            LinkedList<N> path = new LinkedList<>();
+            final LinkedList<N> path = new LinkedList<>();
             
             if(dfs(source, target, visited, path)){
                 System.out.println("Node " + target + " is reachable from node " + source);
@@ -66,11 +68,11 @@ public class GraphImpl<N> implements Graph<N> {
             }
             System.out.println("Not reachable");
         }
-        return null;
+        return Collections.emptyList();
     }
 
-    private boolean dfs(N source, N target,
-    HashMap<N, Boolean> visited, LinkedList<N> path){
+    private boolean dfs(final N source, final N target, 
+                        final HashMap<N, Boolean> visited, final LinkedList<N> path){
         visited.replace(source, true);
         path.add(source);
 
@@ -91,14 +93,14 @@ public class GraphImpl<N> implements Graph<N> {
 
 
 
-    private boolean checkNode(N node){
+    private boolean checkNode(final N node){
         if((node != null) && graph.containsKey(node)){
             return true;
         }
         return false;
     }
 
-    private boolean checkEdge(N source, N target){
+    private boolean checkEdge(final N source, final N target){
         if(checkNode(source) && checkNode(target)){
             return true;
         }
